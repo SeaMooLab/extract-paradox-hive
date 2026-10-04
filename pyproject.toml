@@ -1,0 +1,22 @@
+[project]
+name = "extract-paradox-hive"
+version = "1.0.1"
+description = "Extract Paradox Anticheat custom properties from a Minecraft Bedrock save"
+authors = [
+    {name = "DJ Stomp",email = "85457381+DJStompZone@users.noreply.github.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "amulet-leveldb (>=1.0.7,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "extract_paradox_hive"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project.scripts]
+hive-extractor = "extract_paradox_hive.main:main"
