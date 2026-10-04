@@ -1,6 +1,6 @@
 [project]
 name = "extract-paradox-hive"
-version = "1.0.2"
+version = "1.0.3"
 description = "Extract Paradox Anticheat custom properties from a Minecraft Bedrock save"
 authors = [
     {name = "DJ Stomp",email = "85457381+DJStompZone@users.noreply.github.com"}
