@@ -21,3 +21,12 @@ build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
 hive-extractor = "extract_paradox_hive.main:main"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "coverage (>=7.16.2,<8.0.0)",
+    "pyflakes (>=4.0.3,<5.0.0)",
+    "black (>=26.10.0,<27.0.0)",
+    "pyright (>=1.1.414,<2.0.0)"
+]
