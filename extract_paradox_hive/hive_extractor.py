@@ -2,10 +2,28 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Iterator, Optional, Tuple
+from typing import Any, Dict, Iterable, Iterator, Optional, Protocol, Tuple, cast
 
 from extract_paradox_hive.bedrock_nbt import BedrockNBT
 from extract_paradox_hive.hive_assembler import HiveAssembler
+
+
+class LevelDBHandle(Protocol):
+    """The slice of a LevelDB handle the extractor depends on.
+
+    Real ``leveldb.LevelDB`` objects satisfy this, and so do the lightweight
+    fakes used in tests. Iteration is deliberately not part of the contract:
+    ``BedrockHiveExtractor`` probes for ``items``, ``iterate`` and plain
+    iteration at runtime.
+    """
+
+    def get(self, key: bytes) -> bytes:
+        """Returns the value for ``key``, raising ``KeyError`` if absent."""
+        ...
+
+    def close(self) -> None:
+        """Releases the database."""
+        ...
 
 
 class LevelDBUnavailableError(ImportError):
@@ -55,7 +73,7 @@ class BedrockHiveExtractor:
             db_path: Path to the world's ``db`` directory.
         """
         self.db_path = db_path
-        self.db = None
+        self.db: Optional[LevelDBHandle] = None
 
     def __enter__(self) -> BedrockHiveExtractor:
         """Opens the database.
@@ -78,6 +96,19 @@ class BedrockHiveExtractor:
         """
         self.db = load_leveldb()(self.db_path)
 
+    def _require_db(self) -> LevelDBHandle:
+        """Returns the open database handle.
+
+        Returns:
+            The handle opened by ``open()``.
+
+        Raises:
+            RuntimeError: If the database has not been opened, or was closed.
+        """
+        if self.db is None:
+            raise RuntimeError("Database is not open. Call open() or use a with-block.")
+        return self.db
+
     def close(self) -> None:
         """Closes the database if it is open. Safe to call repeatedly."""
         if self.db is not None:
@@ -93,6 +124,9 @@ class BedrockHiveExtractor:
 
         Returns:
             Flat mapping of property key to string value.
+
+        Raises:
+            RuntimeError: If the database is not open.
         """
         raw_properties = self._read_global_nbt_properties()
 
@@ -137,9 +171,12 @@ class BedrockHiveExtractor:
         Returns:
             Mapping of NBT tag name to string value, empty if the blob is
             absent or empty.
+
+        Raises:
+            RuntimeError: If the database is not open.
         """
         try:
-            nbt_blob = self.db.get(self.DYNAMIC_PROPERTIES_KEY)
+            nbt_blob = self._require_db().get(self.DYNAMIC_PROPERTIES_KEY)
         except KeyError:
             return {}
         if not nbt_blob:
@@ -156,15 +193,19 @@ class BedrockHiveExtractor:
 
         Yields:
             ``(key, value)`` byte pairs.
+
+        Raises:
+            RuntimeError: If the database is not open.
         """
+        db = self._require_db()
         for method_name in ("items", "iterate"):
-            method = getattr(self.db, method_name, None)
+            method = getattr(db, method_name, None)
             if method is not None:
                 yield from method()
                 return
 
-        for key in self.db:
-            yield key, self.db.get(key)
+        for key in cast(Iterable[bytes], db):
+            yield key, db.get(key)
 
     def _decode_property(
         self, key_bytes: bytes, val_bytes: Optional[bytes]

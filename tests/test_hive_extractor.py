@@ -48,12 +48,15 @@ class LoadLevelDBTests(unittest.TestCase):
 
 
 class LifecycleTests(unittest.TestCase):
+    def setUp(self):
+        FakeLevelDB.instances.clear()
+
     def test_context_manager_opens_and_closes(self):
         module = types.SimpleNamespace(LevelDB=fake_leveldb_factory({}))
         with mock.patch.dict(sys.modules, {"leveldb": module}):
             with BedrockHiveExtractor("/x") as extractor:
-                handle = extractor.db
-                self.assertIsNotNone(handle)
+                self.assertIsNotNone(extractor.db)
+        handle = FakeLevelDB.instances[-1]
         self.assertTrue(handle.closed)
         self.assertIsNone(extractor.db)
 
@@ -61,15 +64,27 @@ class LifecycleTests(unittest.TestCase):
         module = types.SimpleNamespace(LevelDB=fake_leveldb_factory({}))
         with mock.patch.dict(sys.modules, {"leveldb": module}):
             with self.assertRaises(RuntimeError):
-                with BedrockHiveExtractor("/x") as extractor:
-                    handle = extractor.db
+                with BedrockHiveExtractor("/x"):
                     raise RuntimeError("boom")
-        self.assertTrue(handle.closed)
+        self.assertTrue(FakeLevelDB.instances[-1].closed)
 
     def test_close_is_idempotent_and_safe_when_never_opened(self):
         extractor = BedrockHiveExtractor("/x")
         extractor.close()
         extractor.close()
+
+    def test_reading_before_open_raises_a_clear_error(self):
+        extractor = BedrockHiveExtractor("/x")
+        for action in (extractor.scan_for_dynamic_properties, extractor.extract):
+            with self.subTest(action=action.__name__):
+                with self.assertRaisesRegex(RuntimeError, "not open"):
+                    quiet(action)
+
+    def test_reading_after_close_raises_a_clear_error(self):
+        extractor = make_extractor({})
+        extractor.close()
+        with self.assertRaisesRegex(RuntimeError, "not open"):
+            quiet(extractor.scan_for_dynamic_properties)
 
 
 class ScanTests(unittest.TestCase):

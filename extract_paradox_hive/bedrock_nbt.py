@@ -151,9 +151,10 @@ class _NbtReader:
             if tag_type == TAG_END:
                 break
             name = self._read_string()
-            value = self._read_payload(tag_type)
             if tag_type == TAG_STRING:
-                self._record_string(name, value)
+                self._record_string(name, self._read_string())
+            else:
+                self._read_payload(tag_type)
 
     def _record_string(self, name: bytes, value: bytes) -> None:
         """Stores a string tag, silently dropping anything that is not UTF-8.
