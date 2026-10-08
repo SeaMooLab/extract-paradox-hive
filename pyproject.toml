@@ -48,6 +48,7 @@ dev = [
 [tool.pyright]
 venvPath = "."
 venv = ".venv"
+stubPath = "./typings"
 
 [tool.pytest.ini_options]
 addopts = "--cov=extract_paradox_hive --cov-report=term-missing --cov-report=html"
