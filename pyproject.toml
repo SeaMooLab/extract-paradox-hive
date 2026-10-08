@@ -1,6 +1,6 @@
 [project]
 name = "extract-paradox-hive"
-version = "1.0.3"
+version = "1.0.5"
 description = "Extract Paradox Anticheat custom properties from a Minecraft Bedrock save"
 authors = [
     {name = "DJ Stomp",email = "85457381+DJStompZone@users.noreply.github.com"}
@@ -10,7 +10,10 @@ requires-python = ">=3.12,<4.0"
 dependencies = [
     "amulet-leveldb (>=1.0.7,<2.0.0)"
 ]
-repository = "https://github.com/SeaMooLab/extract-paradox-hive"
+
+[project.urls]
+Homepage = "https://github.com/SeaMooLab/extract-paradox-hive"
+Repository = "https://github.com/SeaMooLab/extract-paradox-hive"
 
 [tool.poetry]
 packages = [{include = "extract_paradox_hive"}]
@@ -20,4 +23,47 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project.scripts]
-hive-extractor = "extract_paradox_hive.main:main"
+hive-extractor = "extract_paradox_hive.cli:main"
+test-hive-extractor = "pytest:main"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "coverage (>=7.16.2,<8.0.0)",
+    "black (>=26.10.0,<27.0.0)",
+    "pyright (>=1.1.414,<2.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "poetry (>=2.5.1,<3.0.0)"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "coverage (>=7.16.2,<8.0.0)",
+    "black (>=26.10.0,<27.0.0)",
+    "pyright (>=1.1.414,<2.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "poetry (>=2.5.1,<3.0.0)"
+]
+
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+stubPath = "./typings"
+
+[tool.pytest.ini_options]
+addopts = "--cov=extract_paradox_hive --cov-report=term-missing --cov-report=html"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["extract_paradox_hive"]
+
+[tool.coverage.report]
+fail_under = 95
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "pass"
+]
+
