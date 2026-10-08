@@ -65,10 +65,14 @@ def locate_database(input_path: Path) -> Iterator[str]:
             _extract_archive(input_path, tmp_dir)
             db_path = find_db_folder(tmp_dir)
         else:
-            raise WorldInputError("Unsupported input type. Must be a directory, .zip, or .mcworld")
+            raise WorldInputError(
+                "Unsupported input type. Must be a directory, .zip, or .mcworld"
+            )
 
         if not db_path:
-            raise WorldInputError("Could not locate a 'db' folder in the provided input.")
+            raise WorldInputError(
+                "Could not locate a 'db' folder in the provided input."
+            )
 
         print(f"[Harness] Found LevelDB at: {db_path}")
         yield db_path

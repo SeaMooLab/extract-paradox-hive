@@ -96,7 +96,10 @@ class RunTests(unittest.TestCase):
                 raise KeyboardInterrupt  # not an Exception: must still close
 
         with self.assertRaises(KeyboardInterrupt):
-            self.run_cli([str(self.root / "world"), str(self.out)], fake_module(db_class=Exploding))
+            self.run_cli(
+                [str(self.root / "world"), str(self.out)],
+                fake_module(db_class=Exploding),
+            )
         self.assertTrue(all(db.closed for db in FakeLevelDB.instances))
 
     def test_extraction_exception_is_reported_as_fatal(self):
@@ -126,7 +129,9 @@ class ModuleEntryPointTests(unittest.TestCase):
     def test_python_dash_m_runs_the_cli(self):
         proc = subprocess.run(
             [sys.executable, "-m", "extract_paradox_hive"],
-            cwd=PROJECT_ROOT, capture_output=True, text=True,
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
         )
         self.assertEqual(proc.returncode, 1)
         self.assertIn("Usage", proc.stdout)

@@ -81,7 +81,7 @@ class _NbtReader:
             The decoded integer. Truncated input decodes as if zero-padded.
         """
         end = self._offset + size
-        value = int.from_bytes(self._data[self._offset:end], "little", signed=signed)
+        value = int.from_bytes(self._data[self._offset : end], "little", signed=signed)
         self._offset = end
         return value
 
@@ -94,7 +94,7 @@ class _NbtReader:
         if self._offset + 2 > len(self._data):
             return b""
         length = self._read_int(2, signed=False)
-        value = self._data[self._offset:self._offset + length]
+        value = self._data[self._offset : self._offset + length]
         self._offset += length
         return value
 

@@ -85,23 +85,27 @@ class ScanTests(unittest.TestCase):
         self.assertEqual(props, {"abc": "x"})
 
     def test_empty_nbt_blob_is_ignored(self):
-        props, _ = quiet(make_extractor({b"DynamicProperties": b""}).scan_for_dynamic_properties)
+        props, _ = quiet(
+            make_extractor({b"DynamicProperties": b""}).scan_for_dynamic_properties
+        )
         self.assertEqual(props, {})
 
     def test_sweep_filters_binary_keys_and_values(self):
         data = {
-            b"\x00\x01\x02": b"x",          # no printable chars
-            b"ab": b"x",                      # too short
-            b"binary_val": b"a\x00\x00b",     # binary marker
-            b"bad_utf8": b"\xff\xfe",         # not text
-            b"empty_val": b"",                # empty
+            b"\x00\x01\x02": b"x",  # no printable chars
+            b"ab": b"x",  # too short
+            b"binary_val": b"a\x00\x00b",  # binary marker
+            b"bad_utf8": b"\xff\xfe",  # not text
+            b"empty_val": b"",  # empty
             b"keep_me": b"ok",
         }
         props, _ = quiet(make_extractor(data).scan_for_dynamic_properties)
         self.assertEqual(props, {"keep_me": "ok"})
 
     def test_keys_are_reduced_to_printable_ascii(self):
-        props, _ = quiet(make_extractor({b"\x00ns/key\xff": b"v"}).scan_for_dynamic_properties)
+        props, _ = quiet(
+            make_extractor({b"\x00ns/key\xff": b"v"}).scan_for_dynamic_properties
+        )
         self.assertEqual(props, {"ns/key": "v"})
 
     def test_dynamic_properties_key_is_not_swept_as_text(self):

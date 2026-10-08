@@ -31,6 +31,7 @@ def compress_to_payload(value, header: str = "") -> str:
 
 # --- NBT (little-endian) builders -------------------------------------------
 
+
 def nbt_str(s: str) -> bytes:
     raw = s.encode("utf-8")
     return struct.pack("<H", len(raw)) + raw
@@ -53,6 +54,7 @@ def nbt_root(*children: bytes) -> bytes:
 
 
 # --- Fake LevelDB handles ---------------------------------------------------
+
 
 class FakeLevelDB:
     """Dict-backed stand-in exposing ``items()`` like amulet-leveldb."""

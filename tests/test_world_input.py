@@ -8,7 +8,11 @@ from pathlib import Path
 from unittest import mock
 
 from extract_paradox_hive import world_input
-from extract_paradox_hive.world_input import WorldInputError, find_db_folder, locate_database
+from extract_paradox_hive.world_input import (
+    WorldInputError,
+    find_db_folder,
+    locate_database,
+)
 
 
 class TempDirCase(unittest.TestCase):
@@ -98,7 +102,9 @@ class LocateDatabaseTests(TempDirCase):
 
     def test_archive_without_db_is_cleaned_up(self):
         path = self.make_zip("w.zip", with_db=False)
-        with mock.patch.object(world_input.shutil, "rmtree", wraps=world_input.shutil.rmtree) as rm:
+        with mock.patch.object(
+            world_input.shutil, "rmtree", wraps=world_input.shutil.rmtree
+        ) as rm:
             with self.assertRaisesRegex(WorldInputError, "Could not locate"):
                 self.locate(path)
         rm.assert_called_once()
@@ -106,7 +112,9 @@ class LocateDatabaseTests(TempDirCase):
     def test_corrupt_archive_is_cleaned_up_and_reported(self):
         bad = self.root / "bad.zip"
         bad.write_text("not a zip")
-        with mock.patch.object(world_input.shutil, "rmtree", wraps=world_input.shutil.rmtree) as rm:
+        with mock.patch.object(
+            world_input.shutil, "rmtree", wraps=world_input.shutil.rmtree
+        ) as rm:
             with self.assertRaisesRegex(WorldInputError, "Failed to extract archive"):
                 self.locate(bad)
         rm.assert_called_once()

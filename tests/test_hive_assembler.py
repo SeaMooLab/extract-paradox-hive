@@ -71,7 +71,7 @@ class NamespaceTests(unittest.TestCase):
         self.assertEqual(HiveAssembler({})._strip_header("\x02nocolon"), "\x02nocolon")
 
     def test_non_json_text_is_returned_raw(self):
-        raw = {"ns/pointers": '["ns/a"]', "ns/a": '[104, 105]'}
+        raw = {"ns/pointers": '["ns/a"]', "ns/a": "[104, 105]"}
         hive, _ = assemble(raw)
         self.assertEqual(hive["ns"]["a"], "hi")
 
@@ -125,7 +125,9 @@ class NamespaceTests(unittest.TestCase):
 
 class OrphanTests(unittest.TestCase):
     def test_unclaimed_properties_are_reported_with_json_parsed(self):
-        hive, _ = assemble({"someFlag": "true", "label": "plain text", "obj": '{"a": 1}'})
+        hive, _ = assemble(
+            {"someFlag": "true", "label": "plain text", "obj": '{"a": 1}'}
+        )
         self.assertEqual(
             hive["__GLOBAL_PROPERTIES__"],
             {"someFlag": True, "label": "plain text", "obj": {"a": 1}},

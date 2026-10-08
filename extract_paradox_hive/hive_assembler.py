@@ -57,7 +57,9 @@ class HiveAssembler:
         Returns:
             True if the key is long enough and contains at least one letter.
         """
-        return len(key) >= HiveAssembler.MIN_KEY_LENGTH and bool(HiveAssembler._LETTER.search(key))
+        return len(key) >= HiveAssembler.MIN_KEY_LENGTH and bool(
+            HiveAssembler._LETTER.search(key)
+        )
 
     @staticmethod
     def has_binary_markers(value: str) -> bool:
@@ -100,7 +102,10 @@ class HiveAssembler:
         Returns:
             The joined chunk text, or an empty string when there are no chunks.
         """
-        return "".join(raw_properties[key] for key in HiveAssembler.chunk_keys(raw_properties, base_key))
+        return "".join(
+            raw_properties[key]
+            for key in HiveAssembler.chunk_keys(raw_properties, base_key)
+        )
 
     def assemble(self) -> Dict[str, Any]:
         """Builds the structured hive from the raw properties.
@@ -124,7 +129,13 @@ class HiveAssembler:
         Returns:
             Namespace names in sorted order, so output is deterministic.
         """
-        return sorted({key.split(self.POINTERS_SEGMENT)[0] for key in self._raw if self.POINTERS_SEGMENT in key})
+        return sorted(
+            {
+                key.split(self.POINTERS_SEGMENT)[0]
+                for key in self._raw
+                if self.POINTERS_SEGMENT in key
+            }
+        )
 
     def _assemble_namespace(self, namespace: str) -> Dict[str, Any]:
         """Decodes every entry a namespace points at.
@@ -146,7 +157,9 @@ class HiveAssembler:
             if not stitched:
                 continue
             entry_name = base_key.split("/")[-1]
-            entries[entry_name] = self._decode_entry(f"{namespace}/{entry_name}", stitched)
+            entries[entry_name] = self._decode_entry(
+                f"{namespace}/{entry_name}", stitched
+            )
         return entries
 
     def _read_pointer_keys(self, namespace: str) -> Optional[List[str]]:
@@ -216,7 +229,9 @@ class HiveAssembler:
         try:
             return self._parse_decompressed(LZCompressor.decompress(payload))
         except ValueError as e:
-            print(f"[Warning] Corrupted payload caught for '{label}' - Dumping raw data.")
+            print(
+                f"[Warning] Corrupted payload caught for '{label}' - Dumping raw data."
+            )
             return {
                 "__ERROR__": "Decompression Failed",
                 "__REASON__": str(e),
@@ -237,7 +252,7 @@ class HiveAssembler:
         if stitched.startswith(self.COMPRESSED_HEADER_PREFIX):
             header_end = stitched.find(":", 2)
             if header_end != -1:
-                return stitched[header_end + 1:]
+                return stitched[header_end + 1 :]
         return stitched
 
     def _parse_decompressed(self, text: str) -> Any:

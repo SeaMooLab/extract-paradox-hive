@@ -27,7 +27,9 @@ def load_leveldb() -> Any:
     try:
         from leveldb import LevelDB
     except ImportError as e:
-        raise LevelDBUnavailableError("amulet-leveldb is not installed. Run: pip install amulet-leveldb") from e
+        raise LevelDBUnavailableError(
+            "amulet-leveldb is not installed. Run: pip install amulet-leveldb"
+        ) from e
     return LevelDB
 
 
@@ -164,7 +166,9 @@ class BedrockHiveExtractor:
         for key in self.db:
             yield key, self.db.get(key)
 
-    def _decode_property(self, key_bytes: bytes, val_bytes: Optional[bytes]) -> Optional[Tuple[str, str]]:
+    def _decode_property(
+        self, key_bytes: bytes, val_bytes: Optional[bytes]
+    ) -> Optional[Tuple[str, str]]:
         """Turns a raw database entry into a text property, if it is one.
 
         Args:

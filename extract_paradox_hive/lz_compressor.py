@@ -103,14 +103,18 @@ class LZCompressor:
 
         for code in codes[1:]:
             if code is None:
-                raise ValueError("Null code encountered in stream (Likely unseeded Unicode char)")
+                raise ValueError(
+                    "Null code encountered in stream (Likely unseeded Unicode char)"
+                )
 
             if code in dictionary:
                 entry = dictionary[code]
             elif code == dict_size:
                 entry = previous + previous[0]
             else:
-                raise ValueError(f"Invalid dictionary index: {code} (dict_size: {dict_size})")
+                raise ValueError(
+                    f"Invalid dictionary index: {code} (dict_size: {dict_size})"
+                )
 
             result.append(entry)
             dictionary[dict_size] = previous + entry[0]
@@ -118,4 +122,3 @@ class LZCompressor:
             previous = entry
 
         return "".join(result)
-

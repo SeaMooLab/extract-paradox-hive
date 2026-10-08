@@ -21,7 +21,11 @@ from extract_paradox_hive.hive_extractor import (
     load_leveldb,
 )
 from extract_paradox_hive.lz_compressor import LZCompressor
-from extract_paradox_hive.world_input import WorldInputError, find_db_folder, locate_database
+from extract_paradox_hive.world_input import (
+    WorldInputError,
+    find_db_folder,
+    locate_database,
+)
 
 __all__ = [
     "BedrockHiveExtractor",

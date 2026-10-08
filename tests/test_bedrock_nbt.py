@@ -33,7 +33,9 @@ class ExtractStringsTests(unittest.TestCase):
             nbt_tag(12, "longs", struct.pack("<i", 2) + b"\x00" * 16),
             nbt_string_tag("found", "yes"),
         ]
-        self.assertEqual(BedrockNBT.extract_strings(nbt_root(*children)), {"found": "yes"})
+        self.assertEqual(
+            BedrockNBT.extract_strings(nbt_root(*children)), {"found": "yes"}
+        )
 
     def test_reads_strings_in_nested_compounds(self):
         inner = nbt_tag(10, "inner", nbt_compound_payload(nbt_string_tag("deep", "x")))
@@ -61,7 +63,9 @@ class ExtractStringsTests(unittest.TestCase):
         self.assertEqual(BedrockNBT.extract_strings(blob), {"ok": "1"})
 
     def test_empty_string_value_is_kept(self):
-        self.assertEqual(BedrockNBT.extract_strings(nbt_root(nbt_string_tag("e", ""))), {"e": ""})
+        self.assertEqual(
+            BedrockNBT.extract_strings(nbt_root(nbt_string_tag("e", ""))), {"e": ""}
+        )
 
     def test_truncated_blob_returns_what_was_recovered(self):
         blob = nbt_root(nbt_string_tag("a", "1"), nbt_string_tag("b", "2"))
@@ -69,7 +73,7 @@ class ExtractStringsTests(unittest.TestCase):
         self.assertEqual(result.get("a"), "1")
 
     def test_truncated_list_header_warns_instead_of_raising(self):
-        blob = nbt_root(nbt_string_tag("a", "1")) [:-1] + nbt_tag(9, "l", b"")
+        blob = nbt_root(nbt_string_tag("a", "1"))[:-1] + nbt_tag(9, "l", b"")
         self.assertEqual(BedrockNBT.extract_strings(blob).get("a"), "1")
 
     def test_negative_array_length_cannot_loop_forever(self):
