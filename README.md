@@ -33,18 +33,18 @@ Paradox stores its configuration and state as *dynamic properties* inside the wo
 
 ## Installation
 
-From a clone of the repository:
+With pip:
+
+```bash
+pip install extract-paradox-hive
+```
+
+From a clone of the repository (local development):
 
 ```bash
 git clone https://github.com/SeaMooLab/extract-paradox-hive.git
 cd extract-paradox-hive
 poetry install
-```
-
-Or with plain pip:
-
-```bash
-pip install .
 ```
 
 If `amulet-leveldb` is missing at runtime the tool stops with a clear message (`pip install amulet-leveldb`) rather than a traceback.
